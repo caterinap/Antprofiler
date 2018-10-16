@@ -27,3 +27,19 @@ df2<-data.table(rbind(df,ivs))
 df2<-unique(df2,by="species")
 
 #correlations between traits
+listres<-list()
+for (i in 1:NCOL(ind)){
+  tt<-chisq.test(df1002[,ind[1,i]],df1002[,ind[2,i]])
+  dfres<-data.frame(tr1=ind[1,i],tr2=ind[2,i],chi=tt$statistic,
+                    pval=tt$p.value)
+  listres[[i]]<-dfres
+}
+
+
+listres<-rbindlist(listres)
+listres<-listres[pval>0.05 | tr1=="Invasive" | tr2=="Invasive"]
+listres[pval<0.06 & tr2=="Invasive"]
+
+unique(unique(listres$tr1),unique(listres$tr2))
+      
+      
