@@ -5,7 +5,7 @@ library(reshape2)
 library(Amelia)
 library(data.table)
 
-# Calibration Number of trees (ntree) 
+### Calibration: Select optimal number of random forest trees (ntree) 
 
 df <- dfall[rownames(dfall) %in% sp1002, c(1, 2,3, 9, 13 :33, 36, 40:170)] #select target species and traits
 
@@ -23,7 +23,7 @@ for (n in (1:500)){
 
 dfntree
 
-# Calibration mtry 
+### Calibration: Select optimal number of variables randomly sampled at each random forest split (argument mtry) 
 df <- dfall[rownames(dfall) %in% sp1002, c(1, 2,3, 9, 13 :33, 36, 40:170)] #select target species and traits
 
 dfmtry <- data.frame(matrix(NA, nrow = 25, ncol = 6))
@@ -38,7 +38,7 @@ for (n in (1:25)){
   save(dfmtry, file ="./data/data_antprofiler/missForest/error_mtry_selection_dfall.RData")
 }
 
-# Calibration: best k per variable (nb of eigenvectors)
+### Calibration: Select best number of eigenvectors (k) per variable
 
 df <- dfall[rownames(dfall) %in% sp1002, c(1, 2,3, 9, 13 :33, 36, 40:170)]
 names(df)
@@ -71,7 +71,7 @@ for(i in 1:6){
 save(bestk, file ="./data/data_antprofiler/missForest/error_bestk_selection.RData") #bestk
 
 
-# Comparison OOB and true imputation error
+### Comparison between OOB and true imputation error
 
 load("./data/data_antprofiler/dfall.RData")
 #3 traits (609 sp)
@@ -153,7 +153,7 @@ geom_errorbar(aes(ymin=mean - Sd, ymax=mean + Sd),position=position_dodge(width=
 
 
 
-# Final imputation using optimal parameters per traits
+### Final imputation using optimal parameters per traits
 load("./data/data_antprofiler/df1002.RData")
 load("./data/data_antprofiler/dfall.RData")
 load("./data/data_antprofiler/index1002.RData")
@@ -255,7 +255,7 @@ save(all.list, file = "./data/data_antprofiler/all_imputed_datasets.RData")
 
 
 
-####error check
+### Error check
 load("./data/data_antprofiler/missForest/error_bestk_selection.RData") #eigenvectors
 names(bestk) <- c("IndependantFundation","SuperColonial","Ubiquitous", "ColonyFoundation", "DisturbanceSpecialist","NestingType")
 bestk
