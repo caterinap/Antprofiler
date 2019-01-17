@@ -45,4 +45,6 @@ setcolorder(ivs, names(df))
 df2<-data.table(rbind(df,ivs))
 df2<-unique(df2,by="species")      
 
-save(df2, file = "./data/data_antprofiler/df1002.RData")    
+  #save names of selected species
+sp1002<-unique(df2$species)
+save(sp1002, file = "./data/data_antprofiler/index1002.RData")
