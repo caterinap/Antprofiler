@@ -2,7 +2,7 @@
 require(data.table)
 
 ##load data
-load("./data/data_antprofiler/dfall.RData")
+load("./data/data_antprofiler/ant_traits.RData")
   #how many NAs per trait?
 apply(dfall,2, function(x) sum(is.na(x))/nrow(dfall)*100)
       
