@@ -11,7 +11,7 @@ library(boot)
 library(pROC)
 
 ## load 100 imputed dataset
-load("./data/data_antprofiler/dfall.RData")
+load("./data/data_antprofiler/ant_traits.RData")
 load("./data/data_antprofiler/all_imputed_datasets.RData")
 dfall$species<-rownames(dfall)
 
