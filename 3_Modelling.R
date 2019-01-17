@@ -10,12 +10,12 @@ library(visreg)
 library(boot)
 library(pROC)
 
-## load imputed dataset
+## load 100 imputed dataset
 load("./data/data_antprofiler/dfall.RData")
 load("./data/data_antprofiler/all_imputed_datasets.RData")
 dfall$species<-rownames(dfall)
 
-#add invasive information from whole dataset
+#add invasive information from whole dataset (this information was removed for the imputation)
 all.list2 <- list()
 for (i in 1:100){
   all.list[[i]]$species <- rownames(all.list[[i]])
@@ -30,11 +30,9 @@ for (i in 1:100){
 }
 
 
-df <- all.list2[[1]]
-
-
-
 #Full model on one dataset
+df <- all.list2[[1]] #select only one dataset to check the model
+
 m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + ColonyFoundation + DisturbanceSpecialist, 
                     data = df,family=binomial(logit))
 summary(m1)
@@ -155,7 +153,7 @@ for (j in invasp){
 for (i in 1:100){
   tryCatch({
   df <- all.list2[[i]]
-  df <- df[df$species != j,]
+  df <- df[df$species != j,] #remove one invasive
   m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + ColonyFoundation + DisturbanceSpecialist, 
             data = df,family=binomial(logit))
   preds<-NA
@@ -203,7 +201,7 @@ for (j in invasp){
   for (i in 1:100){
     tryCatch({
       df <- all.list2[[i]]
-      df[df$species==j,]$Invasive<-0
+      df[df$species==j,]$Invasive<-0 #transform invasive into non invasive
       m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + ColonyFoundation + DisturbanceSpecialist, 
                 data = df,family=binomial(logit))
       preds<-NA
@@ -219,7 +217,6 @@ for (j in invasp){
     print(i);print(j);print(counter)
   }
 }
-
 
 all.inv<-do.call(rbind,potentialinv)
 intersect(unique(all.inv$invs.species),invasp)
