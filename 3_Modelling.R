@@ -22,10 +22,9 @@ for (i in 1:100){
   all.list2[[i]] <- merge(all.list[[i]],dfall[,c("species","Invasive")],by="species")
 
   all.list2[[i]]$SuperColonial<-as.factor(all.list2[[i]]$SuperColonial)
-  all.list2[[i]]$IndependantFundation<-as.factor(all.list2[[i]]$IndependantFundation)
+  all.list2[[i]]$IndependantFundation<-as.factor(all.list2[[i]]$IndependentFoundation)
   all.list2[[i]]$Ubiquitous<-as.factor(all.list2[[i]]$Ubiquitous)
   all.list2[[i]]$DisturbanceSpecialist<-as.factor(all.list2[[i]]$DisturbanceSpecialist)
-  all.list2[[i]]$ColonyFoundation<-as.factor(all.list2[[i]]$ColonyFoundation)
   all.list2[[i]]$Invasive<-as.factor(all.list2[[i]]$Invasive)
 }
 
@@ -33,7 +32,7 @@ for (i in 1:100){
 #Full model on one dataset
 df <- all.list2[[1]] #select only one dataset to check the model
 
-m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + ColonyFoundation + DisturbanceSpecialist, 
+m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + IndependentFoundation + DisturbanceSpecialist, 
                     data = df,family=binomial(logit))
 summary(m1)
 vif(m1)
@@ -59,8 +58,8 @@ summary(m2) #best model is full model
 weightable(m2) #all models
 
 #some models are comparable (AICc<2) -> average them
-mm1 <- glm(Invasive ~ 1 + SuperColonial + ColonyFoundation + DisturbanceSpecialist, data = df,family=binomial)
-mm2 <- glm(Invasive ~ 1 + SuperColonial + Ubiquitous + ColonyFoundation + DisturbanceSpecialist, data = df,family=binomial)
+mm1 <- glm(Invasive ~ 1 + SuperColonial + IndependentFoundation + DisturbanceSpecialist, data = df,family=binomial)
+mm2 <- glm(Invasive ~ 1 + SuperColonial + Ubiquitous + IndependentFoundation + DisturbanceSpecialist, data = df,family=binomial)
 
 #average the models
 mm.avg <- model.avg(mm1,mm2)
@@ -115,7 +114,7 @@ potentialinv<-list()
 
 for (i in 1:100){
 df <- all.list2[[i]]
-m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + ColonyFoundation + DisturbanceSpecialist, 
+m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + IndependentFoundation + DisturbanceSpecialist, 
           data = df,family=binomial(logit))
 preds<-predict(m1,type="response",se.fit=T)
 df$predictedInva<-preds$fit
@@ -154,7 +153,7 @@ for (i in 1:100){
   tryCatch({
   df <- all.list2[[i]]
   df <- df[df$species != j,] #remove one invasive
-  m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + ColonyFoundation + DisturbanceSpecialist, 
+  m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + IndependentFoundation + DisturbanceSpecialist, 
             data = df,family=binomial(logit))
   preds<-NA
   preds<-predict(m1,type="response",se.fit=T)
@@ -202,7 +201,7 @@ for (j in invasp){
     tryCatch({
       df <- all.list2[[i]]
       df[df$species==j,]$Invasive<-0 #transform invasive into non invasive
-      m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + ColonyFoundation + DisturbanceSpecialist, 
+      m1 <- glm(Invasive ~  SuperColonial + Ubiquitous + IndependentFoundation + DisturbanceSpecialist, 
                 data = df,family=binomial(logit))
       preds<-NA
       preds<-predict(m1,type="response",se.fit=T)
