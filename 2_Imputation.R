@@ -7,17 +7,16 @@ library(data.table)
 
 ### Calibration: Select optimal number of random forest trees (ntree) 
 
-df <- dfall[rownames(dfall) %in% sp1002, c(1:24, 31:170)] #select target species and traits
+df <- dfall[rownames(dfall) %in% sp1002, c(1:21, 23, 26:156)] #select target species and traits
 
-dfntree <- data.frame(matrix(NA, nrow = 500, ncol = 6))
-colnames(dfntree) <- c("ntree", "Ubiquitous","NestingType","DisturbanceSpecialist","IndependentFoundation","SuperColonial")
+dfntree <- data.frame(matrix(NA, nrow = 500, ncol = 5))
+colnames(dfntree) <- c("ntree", "Ubiquitous","DisturbanceSpecialist","IndependentFoundation","SuperColonial")
 
 for (n in (1:500)){
   dfntree[n, 1] <- n
     o <- missForest(df, maxiter = 10, ntree = n, variablewise = TRUE) 
     dfntree[n,2] <- o$OOBerror[1]; dfntree[n,3] <- o$OOBerror[2];    #save OOBerror for target traits only
-    dfntree[n,4] <- o$OOBerror[3]; dfntree[n,5] <- o$OOBerror[7]; 
-    dfntree[n,6] <- o$OOBerror[24]
+    dfntree[n,4] <- o$OOBerror[3]; dfntree[n,5] <- o$OOBerror[21] 
     save(dfntree, file ="./data/data_antprofiler/missForest/error_ntre_selection_dfall.RData")
   }
 
@@ -25,36 +24,34 @@ dfntree
 
 ### Calibration: Select optimal number of variables randomly sampled at each random forest split (argument mtry) 
 
-df <- dfall[rownames(dfall) %in% sp1002, c(1:24, 31:170)] #select target species and traits
+df <- dfall[rownames(dfall) %in% sp1002, c(1:21, 23, 26:156)] #select target species and traits
 
-dfmtry <- data.frame(matrix(NA, nrow = 25, ncol = 6))
-colnames(dfmtry) <- c("mtry", "Ubiquitous","NestingType","DisturbanceSpecialist","IndependentFoundation","SuperColonial")
+dfmtry <- data.frame(matrix(NA, nrow = 25, ncol = 5))
+colnames(dfmtry) <- c("mtry", "Ubiquitous","DisturbanceSpecialist","IndependentFoundation","SuperColonial")
 
 for (n in (1:25)){
   dfmtry[n, 1] <- n
   o <- missForest(df, maxiter = 15, mtry = n, ntree = 100 , variablewise = TRUE) 
   dfmtry[n,2] <- o$OOBerror[1]; dfmtry[n,3] <- o$OOBerror[2]; 
-  dfmtry[n,4] <- o$OOBerror[3]; dfmtry[n,5] <- o$OOBerror[7];  #save OOBerror for target traits only
-  dfmtry[n,6] <- o$OOBerror[24]; dfmtry[counter,7] <- o$OOBerror[23]
+  dfmtry[n,4] <- o$OOBerror[3]; dfmtry[n,5] <- o$OOBerror[21]  #save OOBerror for target traits only
   save(dfmtry, file ="./data/data_antprofiler/missForest/error_mtry_selection_dfall.RData")
 }
 
 ### Calibration: Select best number of eigenvectors (k) per variable
 
-df <- dfall[rownames(dfall) %in% sp1002, c(1:24, 31:170)] #select target species and traits
+df <- dfall[rownames(dfall) %in% sp1002, c(1:21, 23, 26:156)] #select target species and traits
 names(df)
 
-dfk <- data.frame(matrix(NA, nrow = 1000, ncol = 7))
-colnames(dfk) <- c("k","IndependentFoundation","SuperColonial","Ubiquitous", "ColonyFoundation", "DisturbanceSpecialist","NestingType")
+dfk <- data.frame(matrix(NA, nrow = 1000, ncol = 5))
+colnames(dfk) <- c("k","IndependentFoundation","SuperColonial","Ubiquitous", "DisturbanceSpecialist")
 counter=1
 for (i in 1:10) {
 for (n in (1:100)){
   dfk[counter, 1] <- n
-  dfimp <- df[, 1: ( 24+n)]
+  dfimp <- df[, 1: (22+n)]
   o <- missForest(dfimp, maxiter = 15, mtry = 10, ntree = 100 , variablewise = TRUE) 
   dfk[counter,2] <- o$OOBerror[1]; dfk[counter,3] <- o$OOBerror[2]; #save OOBerror for target traits only
-  dfk[counter,4] <- o$OOBerror[3]; dfk[counter,5] <- o$OOBerror[7]; 
-  dfk[counter,6] <- o$OOBerror[24];dfk[counter,7] <- o$OOBerror[23]
+  dfk[counter,4] <- o$OOBerror[3]; dfk[counter,5] <- o$OOBerror[21]
   save(dfk, file ="./data/data_antprofiler/missForest/error_k_selection_dfall.RData")
   counter=counter+1
 }
@@ -80,20 +77,20 @@ save(bestk, file ="./data/data_antprofiler/missForest/error_bestk_selection.RDat
 load("./data/data_antprofiler/dfall.RData")
 
 # prepare empty dataset
-dferror1002 <- data.frame(matrix(NA, nrow = 5, ncol = 102))
-rownames(dferror1002) <- c("IndependentFoundation","SuperColonial","Ubiquitous", "DisturbanceSpecialist","NestingType")
+dferror1002 <- data.frame(matrix(NA, nrow = 4, ncol = 102))
+rownames(dferror1002) <- c("IndependentFoundation","SuperColonial","Ubiquitous", "DisturbanceSpecialist")
 colnames(dferror1002) <- c(paste(rep ("rand", 100), 1:100, sep = ""), "moy", "se")
 dferror1002OOB <- dferror1002
 
 # load information on optimal number of eigenvectors
 load("./data/data_antprofiler/missForest/error_bestk_selection.RData") #bestk
-df <- dfall[rownames(dfall) %in% sp1002,c("IndependentFoundation","SuperColonial","Ubiquitous", "DisturbanceSpecialist","NestingType")]
+df <- dfall[rownames(dfall) %in% sp1002,c("IndependentFoundation","SuperColonial","Ubiquitous", "DisturbanceSpecialist")]
 
-tauxNA1002 <- c(62.60, 62.50, 5.44, 52.52,5.74) #this is the proportion of NA's per target trait
+tauxNA1002 <- c(62.60, 62.50, 5.44, 52.52) #this is the proportion of NA's per target trait
 
 for (i in 1:5){ # i is the trait column
   l <- which(is.na(df[, i]) == TRUE)
-  dfimp <- df[-l, 1: (24+bestk[i])]
+  dfimp <- df[-l, 1: (22+bestk[i])]
   N <- round(tauxNA1002[i]*dim(dfimp)[1]/100)
   
   #randomly include NAs in the dataset (same proportion as original % of NAs
@@ -169,23 +166,22 @@ dev.off()
 
 load("./data/data_antprofiler/missForest/error_bestk_selection.RData") #optimal number of eigenvectors
 bestk #1 or 25
-names(bestk) <- c("IndependentFoundation","SuperColonial","Ubiquitous", "ColonyFoundation", "DisturbanceSpecialist","NestingType")
+names(bestk) <- c("IndependentFoundation","SuperColonial","Ubiquitous", "DisturbanceSpecialist")
 
 #select columns
 k=1
-df <- dfall[rownames(dfall) %in% sp1002, 
-c(1:24, 31:170)]
+df <- dfall[rownames(dfall) %in% sp1002, c(1:21, 23, 26:156)]
 
 #100 imputations with different number of eigenvectors per trait
 errors <- list()
 counter=1
 for (i in (1:100)){ # i = imputation ID
   for(k in c(1,2,20,21)){ # k = number of eigenvectors
-    o <- missForest(df[,c(1:(24+k))], maxiter = 15, ntree = 100, mtry = 6, variablewise=T)
+    o <- missForest(df[,c(1:(22+k))], maxiter = 15, ntree = 100, mtry = 6, variablewise=T)
     dfimputed <- o$ximp
     dfimputed$species <- rownames(dfimputed)
     save(dfimputed, file = paste("./data/data_antprofiler/missForest/dfimputed708_i", i, "_k", k, ".RData", sep = ""))
-    errorsdf <- data.frame(nrep=i,neigen=k,trait=names(df[,c(1:(24+k))]),error=o$OOB)
+    errorsdf <- data.frame(nrep=i,neigen=k,trait=names(df[,c(1:(22+k))]),error=o$OOB)
     errors[[counter]] <- errorsdf
     print(paste(i,k))
     save(errors,file = paste("./data/data_antprofiler/missForest/dfimputed708_k", k, ".RData", sep = ""))
@@ -197,7 +193,7 @@ for (i in (1:100)){ # i = imputation ID
 dirpath<-"data/data_antprofiler/missForest/"
 
 load("./data/data_antprofiler/missForest/error_bestk_selection.RData") #eigenvectors
-names(bestk) <- c("IndependentFoundation","SuperColonial","Ubiquitous", "ColonyFoundation", "DisturbanceSpecialist","NestingType")
+names(bestk) <- c("IndependentFoundation","SuperColonial","Ubiquitous", "DisturbanceSpecialist")
 bestk
 
 #open all files
@@ -236,7 +232,7 @@ save(all.list, file = "./data/data_antprofiler/all_imputed_datasets.RData")
 
 ### Evaluate the mean and sd values of OOB error per trait
 load("./data/data_antprofiler/missForest/error_bestk_selection.RData") #eigenvectors
-names(bestk) <- c("IndependentFoundation","SuperColonial","Ubiquitous", "ColonyFoundation", "DisturbanceSpecialist","NestingType")
+names(bestk) <- c("IndependentFoundation","SuperColonial","Ubiquitous", "DisturbanceSpecialist")
 bestk
 
 dirpath<-"data/data_antprofiler/missForest/" #where the datasets were saved
