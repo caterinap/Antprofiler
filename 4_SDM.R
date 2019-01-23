@@ -1,6 +1,15 @@
-#### Fourth part of the analysis: Species Distribution Models ####
 
-#Example for Lepisiota_canescens
+#-----------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------
+#                     Build SDMs fro Ants
+#-----------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------
+#                     Charge library
+#-----------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------
 
 library(biomod2)
 library(raster)
@@ -52,20 +61,21 @@ myBiomodData<-BIOMOD_FormatingData(resp.var = myResp,
                                      resp.name = myRespName,
                                      PA.nb.rep = 3,
                                      PA.nb.absences = 50000,
-                                     PA.strategy = 'random')
+                                     PA.strategy = 'disk',
+                                     PA.dist.min= 10000)
   
 myBiomodOptions <- BIOMOD_ModelingOptions()
   
 myBiomodModelOut <- BIOMOD_Modeling ( myBiomodData, 
-                                        models = c('GLM','GBM','ANN', 'FDA','MARS','RF','MAXENT'), #GMB = BRT
+                                        models = c('GLM','GBM','ANN', 'FDA','MARS','RF',"MAXENT"), #GMB = BRT
                                         models.options = myBiomodOptions, 
-                                        NbRunEval=4, # pour pouvoir evaluer les modÃ¨les et pondÃ©rer dans EM en fonction de leur poids
+                                        NbRunEval=4, 
                                         DataSplit=70, 
                                         VarImport=1, 
                                         models.eval.meth = c('TSS','ROC'),
                                         Prevalence = 0.5, # Equal weightings were given to presences and PAs
                                         SaveObj = TRUE,
-                                        rescal.all.models = TRUE, # rendre les modÃ¨les plus comparables entre eux
+                                        rescal.all.models = TRUE, 
                                         do.full.models = TRUE, # run the final model with 100% of the data
                                         modeling.id= paste("mod_", df[1,1], sep = ""))
   
@@ -76,15 +86,15 @@ myBiomodEM <- BIOMOD_EnsembleModeling( modeling.output = myBiomodModelOut,
                                          eval.metric = 'TSS',
                                          eval.metric.quality.threshold = 0.6,
                                          models.eval.meth = c('TSS','ROC'),
-                                         prob.mean.weight = TRUE, # pour avoir une rÃ©ponse continue malgrÃ© plusieurs modÃ¨les dont les sorties sont discrÃ¨tes (il suffut d'un continu et avec "mean" on aura sortie de l'ensemble modeling continue)
+                                         prob.mean.weight = TRUE, 
                                          prob.mean.weight.decay = 'proportional',
-                                         VarImport = 0) # Number of permutation to estimate variable importance : 0 because takes too long
+                                         VarImport = 10) 
   
   
 a <- get_evaluations(myBiomodEM)[2]
 
-myBiomodProjection <- BIOMOD_Projection(modeling.output = myBiomodModelOut, # projette chacun des algo / PA set / run sur ce nouvel environnement
-                                            new.env = myExpl, # variables climatiques de la pÃ©riode de temps dans laquelle on projette le modele
+myBiomodProjection <- BIOMOD_Projection(modeling.output = myBiomodModelOut, 
+                                            new.env = myExpl, 
                                             proj.name = "current",
                                             selected.models = 'all',
                                             binary.meth = 'TSS',
@@ -92,20 +102,20 @@ myBiomodProjection <- BIOMOD_Projection(modeling.output = myBiomodModelOut, # pr
                                             build.clamping.mask = FALSE)
 
 
-myBiomodEF <- BIOMOD_EnsembleForecasting(projection.output = myBiomodProjection, # fait l'ensemble Ã  partir de toutes ces projections 
+myBiomodEF <- BIOMOD_EnsembleForecasting(projection.output = myBiomodProjection, 
                                              binary.meth = 'TSS',
                                              EM.output = myBiomodEM)
     
     
-
 #-----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------
 #                    Plot maps
 #-----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------
 
+myCurrentProj <- get_predictions(myBiomodProjection)
 my.colors = colorRampPalette(c("cornsilk", "darkorchid4")) 
-plot(myBiomodProjection,col=my.colors(1000),axes=FALSE, 
+plot(myCurrentProj ,col=my.colors(1000),axes=FALSE, 
      box=FALSE, main="Lepisiota canescens")
 
 
@@ -128,6 +138,7 @@ myBiomodProjectionFuture <- BIOMOD_Projection(modeling.output = myBiomodModelOut
                                               binary.meth = 'TSS',
                                               compress = FALSE,
                                               build.clamping.mask = TRUE)
+
 #-----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------
 #                    Plot maps
@@ -137,6 +148,3 @@ myBiomodProjectionFuture <- BIOMOD_Projection(modeling.output = myBiomodModelOut
 my.colors = colorRampPalette(c("cornsilk", "darkorchid4")) 
 plot(myBiomodProjectionFuture,col=my.colors(1000),axes=FALSE, 
      box=FALSE, main="Lepisiota canescens Future")
-
-
-
