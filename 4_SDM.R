@@ -1,7 +1,7 @@
 
 #-----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------
-#                     Build SDMs fro Ants
+#                     Build SDMs for Ants
 #-----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ myBiomodData<-BIOMOD_FormatingData(resp.var = myResp,
                                      resp.xy = myRespXY,
                                      resp.name = myRespName,
                                      PA.nb.rep = 3,
-                                     PA.nb.absences = 50000,
+                                     PA.nb.absences = 1000,
                                      PA.strategy = 'disk',
                                      PA.dist.min= 10000)
   
@@ -148,3 +148,6 @@ myBiomodProjectionFuture <- BIOMOD_Projection(modeling.output = myBiomodModelOut
 my.colors = colorRampPalette(c("cornsilk", "darkorchid4")) 
 plot(myBiomodProjectionFuture,col=my.colors(1000),axes=FALSE, 
      box=FALSE, main="Lepisiota canescens Future")
+
+
+
