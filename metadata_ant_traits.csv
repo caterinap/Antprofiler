@@ -1,0 +1,27 @@
+Trait_name;Description;Values;Trait_name_Antprofiler
+Genus;genus name;NA;NA
+Sp;species name;NA;NA
+IndependentFoundation;Type of colony foundation;"1:independent; 0:dependent or facultative";ColonyFoundation
+SuperColonial;;"1:super-colonial; 0: Monodomous or Polydomous";ColonyStructure
+Ubiquitous;;"1:uniquitous; 0:non-ubiquitous";NestingType
+MinBodySize;Min Body size in mm (smallest workers);numerical;MinBodySize
+Gyny;;"Monogynous; Oligogynous; Polygynous; Facultative";Gyny
+ColonyDensity;;numerical;ColonyDensity
+Workers;;numerical;Workers
+WorkerPolymorphism;;"Yes; No";WorkerPolymorphism
+MaxBodySize;Min Body size in mm biggest workers);numerical;MaxBodySize
+SterileWorkers;;"Yes; No";SterileWorkers
+Sting;;"Yes; No";Sting
+Diet;FungusGrowing, Granivorous, Honeydew, Omnivorous, Predatory, Scavenger;"FG; Gr; Ho; Om; Pr; Sc";Diet
+Aggressitivity;;"Aggressive; Unresponsive; Evasive";Aggressitivity
+ForagingBehaviour;Generalist, SolitaryForager, MassRecruiter, HomopteranTender, ArmyAnt, FungusGrower, GroupHunter;"Ge, SF; MR; HAT; AA; FG; GH";ForagingBehaviour
+ActivityRange;;"Day; Night; DayAndNight";ActivityRange
+HasSymbioses;;"Yes; No";HasSymbioses
+Parasitic;;"Yes; No";Parasitic
+SlaveMaking;;"Yes; No";SlaveMaking
+NestRaids;;"Yes; No";NestRaids
+Habitat;AgriculturalAreas, Coastland, Desert, Generalist, Grassland, Forest, RiparianZones, Shrubland, Tundra, UrbanAreas;"AA; Co; De; Ge; Gr; RF; RZ; Sh; TDF; TF; Tu; UA";Habitat
+DisturbanceSpecialist;;"Yes; No";DisturbanceSpecialist
+Invasive;;"1: yes; 0: no";Invasive
+Exotic;;"1: yes; 0: no";Exotic
+e1, e2, … e130;eigenvectors based on the phylogeny (from 1 to 130);numerical;NA
