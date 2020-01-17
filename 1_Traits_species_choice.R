@@ -29,9 +29,9 @@ df <- data.table(dfall)
 y = sort(df[,lapply(.SD, function(x) sum(is.na(x)))])
 setcolorder(df, names(y))
   #sort by increasing number of NA in rows
+df$species <- row.names(dfall)
 df[, idx := rowSums(is.na(df))] # count nr of NA in rows
 df = df[order(idx),] # sort
-df$species <- row.names(dfall)
   #select species with less than, e.g., 4 NAs per row                 
 df<-df[idx<4]
 apply(df,2, function(x) sum(is.na(x))/nrow(df)*100) #how many NAs per trait?
